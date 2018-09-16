@@ -112,7 +112,7 @@
 	</xsl:if>
 
 	<xsl:choose>
-		<xsl:when test="l:de-bruijn-lambda[position() = 1]">
+		<xsl:when test="l:*[1][self::l:de-bruijn-lambda]">
 			<xsl:if test="$int:debug = 'yes'">
 				<xsl:message terminate="no">
 					<xsl:text>DEBUG: en-route template[@select=</xsl:text>
@@ -120,8 +120,8 @@
 					<xsl:text>][@mode=ls:onestep-reduction][term=</xsl:text>
 					<xsl:apply-templates select="." mode="ls:pretty-print" />
 					<xsl:text>]</xsl:text>
-					<xsl:text>[l:de-bruijn-lambda[position() = 1]=</xsl:text>
-					<xsl:apply-templates select="l:de-bruijn-lambda[position() = 1]" mode="ls:pretty-print" />
+					<xsl:text>[l:*[1][self::l:de-bruijn-lambda]=</xsl:text>
+					<xsl:apply-templates select="l:*[1][self::l:de-bruijn-lambda]" mode="ls:pretty-print" />
 					<xsl:text>]</xsl:text>
 				</xsl:message>
 			</xsl:if>

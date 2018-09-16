@@ -44,7 +44,7 @@
 
 <xsl:template match="l:apply" mode="ls:has-beta-redex">
 	<xsl:choose>
-		<xsl:when test="l:de-bruijn-lambda[position() = 1]">
+		<xsl:when test="l:*[1][self::l:de-bruijn-lambda]">
 			<xsl:text>true</xsl:text>
 		</xsl:when>
 		<xsl:otherwise>
