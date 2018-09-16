@@ -14,6 +14,8 @@ For users (for use by CLI XSLT processor):
 
   * conv-to-de-bruijn-term.xsl
       - Front-end of /lib/conv-to-de-bruijn-term.xsl.
+  * eta-reduction.xsl
+      - Front-end of /lib/eta-reduction.xsl.
   * full-reduction.xsl
       - Front-end of /lib/full-reduction.xsl.
   * onestep-reduction.xsl
@@ -26,6 +28,8 @@ For developers (for use by `<xsl:import>` or `<xsl:include>`):
   * lib/
       + conv-to-de-bruijn-term.xsl
           - Converts the given term into a de Bruijn term.
+      + eta-reduction.xsl
+          - Applies eta (η) reduction as possible.
       + full-reduction.xsl
           - Evaluates the given de Bruijn term as possible.
       + has-beta-redex.xsl
