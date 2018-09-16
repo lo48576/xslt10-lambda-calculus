@@ -148,6 +148,7 @@
 		<xsl:choose>
 			<xsl:when test="$omit-current-paren = 'yes'">no</xsl:when>
 			<xsl:when test="$force-paren = 'yes'">yes</xsl:when>
+			<xsl:when test="count(l:*) = 1">no</xsl:when>
 			<xsl:when test="parent::l:body | parent::l:de-bruijn-lambda">no</xsl:when>
 			<xsl:when test="self::*[parent::l:apply][not(preceding-sibling::*)]">no</xsl:when>
 			<xsl:otherwise>yes</xsl:otherwise>
