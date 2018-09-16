@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<apply xmlns="http://www.cardina1.red/_ns/xslt-lambda-calculus">
+	<lambda>
+		<param>x</param>
+		<body>
+			<lambda>
+				<param>y</param>
+				<body>
+					<lambda>
+						<param>z</param>
+						<body>
+							<apply>
+								<var>x</var>
+								<var>z</var>
+								<apply>
+									<var>y</var>
+									<var>z</var>
+								</apply>
+							</apply>
+						</body>
+					</lambda>
+				</body>
+			</lambda>
+		</body>
+	</lambda>
+	<lambda>
+		<param>x</param>
+		<body>
+			<lambda>
+				<param>y</param>
+				<body>
+					<var>x</var>
+				</body>
+			</lambda>
+		</body>
+	</lambda>
+</apply>

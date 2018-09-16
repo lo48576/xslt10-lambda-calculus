@@ -1,0 +1,1 @@
+../plain/03-lambda-as-arg.txt

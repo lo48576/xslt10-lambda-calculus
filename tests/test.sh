@@ -32,6 +32,21 @@ test_plain_eta() {
 
 # $1: exp_path
 # $2: exp_stem
+test_desugar() {
+	result_path="desugar/${2}.txt"
+	if [ ! -e "$result_path" ] ; then
+		echo "[SKIP] Case ${2} for desugar is skipped"
+		return
+	fi
+	diff_out="$(xsltproc ../xsl/desugar.xsl "$1" | xsltproc ../xsl/pretty-print.xsl - | diff --unified -- "${result_path}" -)"
+	if [ -n "${diff_out}" ] ; then
+		echo "Different output: case ${2} for desugar"
+		echo "$diff_out"
+	fi
+}
+
+# $1: exp_path
+# $2: exp_stem
 test_de_bruijn_term() {
 	result_path="de-bruijn-term/${2}.txt"
 	if [ ! -e "$result_path" ] ; then
@@ -53,7 +68,7 @@ test_reduction_steps() {
 		echo "[SKIP] Case ${2} for reduction-steps is skipped"
 		return
 	fi
-	diff_out="$(xsltproc ../xsl/conv-to-de-bruijn-term.xsl "$1" | xsltproc reduction-steps.xsl - | diff --unified -- "${result_path}" -)"
+	diff_out="$(xsltproc ../xsl/desugar.xsl "$1" | xsltproc ../xsl/conv-to-de-bruijn-term.xsl - | xsltproc reduction-steps.xsl - | diff --unified -- "${result_path}" -)"
 	if [ -n "${diff_out}" ] ; then
 		echo "Different output: case ${2} for reduction-steps"
 		echo "$diff_out"
@@ -69,7 +84,7 @@ test_full_reduction() {
 		return
 	fi
 	expected_result="$(tail -n 1 "$result_path")"
-	actual_result="$(xsltproc ../xsl/conv-to-de-bruijn-term.xsl "$1" | xsltproc ../xsl/full-reduction.xsl - | xsltproc ../xsl/pretty-print.xsl -)"
+	actual_result="$(xsltproc ../xsl/desugar.xsl "$1" | xsltproc ../xsl/conv-to-de-bruijn-term.xsl - | xsltproc ../xsl/full-reduction.xsl - | xsltproc ../xsl/pretty-print.xsl -)"
 	if [ "$expected_result" != "$actual_result" ] ; then
 		echo "Different output: case ${2} for full-reduction"
 		echo "$diff_out"
