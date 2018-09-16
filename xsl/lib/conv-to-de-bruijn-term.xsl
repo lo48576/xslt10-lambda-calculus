@@ -19,6 +19,7 @@
 		<xsl:value-of select="namespace-uri()" />
 		<xsl:text>}</xsl:text>
 		<xsl:value-of select="local-name()" />
+		<xsl:text>, mode=ls:conv-to-de-bruijn-term</xsl:text>
 	</xsl:message>
 </xsl:template>
 

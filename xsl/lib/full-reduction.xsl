@@ -24,7 +24,7 @@
 		<xsl:value-of select="namespace-uri()" />
 		<xsl:text>}</xsl:text>
 		<xsl:value-of select="local-name()" />
-		<xsl:text>, mode=ls:reduction-steps</xsl:text>
+		<xsl:text>, mode=ls:full-reduction</xsl:text>
 	</xsl:message>
 </xsl:template>
 
