@@ -144,13 +144,6 @@
 <xsl:template match="l:apply" mode="ls:pretty-print">
 	<xsl:param name="force-paren" select="'no'" />
 	<xsl:param name="omit-current-paren" select="'no'" />
-	<xsl:if test="count(l:*) != 2">
-		<xsl:message terminate="yes">
-			<xsl:text>ERROR: `l:apply` should have just 2 subterms, but found </xsl:text>
-			<xsl:value-of select="count(l:*)" />
-			<xsl:text> (mode=ls:pretty-print)</xsl:text>
-		</xsl:message>
-	</xsl:if>
 	<xsl:variable name="paren">
 		<xsl:choose>
 			<xsl:when test="$omit-current-paren = 'yes'">no</xsl:when>
@@ -164,9 +157,12 @@
 	<xsl:if test="$paren = 'yes'">
 		<xsl:text>(</xsl:text>
 	</xsl:if>
-	<xsl:apply-templates select="l:*[1]" mode="ls:pretty-print" />
-	<xsl:text> </xsl:text>
-	<xsl:apply-templates select="l:*[2]" mode="ls:pretty-print" />
+	<xsl:for-each select="l:*">
+		<xsl:if test="position() != 1">
+			<xsl:text> </xsl:text>
+		</xsl:if>
+		<xsl:apply-templates select="." mode="ls:pretty-print" />
+	</xsl:for-each>
 	<xsl:if test="$paren = 'yes'">
 		<xsl:text>)</xsl:text>
 	</xsl:if>
