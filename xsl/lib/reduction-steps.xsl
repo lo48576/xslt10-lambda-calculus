@@ -130,6 +130,7 @@
 		</xsl:when>
 		<xsl:otherwise>
 			<xsl:apply-templates select="exsl:node-set($result)" mode="ls:reduction-steps">
+				<xsl:with-param name="max-recursion" select="$max-recursion" />
 				<xsl:with-param name="int:recursion-count" select="number($int:recursion-count) + 1" />
 				<xsl:with-param name="int:term-serialized" select="$result-serialized" />
 			</xsl:apply-templates>
