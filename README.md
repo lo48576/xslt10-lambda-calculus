@@ -158,6 +158,20 @@ them should be just one XML element.
 
 `l:apply` can only be used in any terms.
 
+
+## Use of EXSLT (`node-set()`)
+
+Some of stylesheets uses
+[`node-set()` function](http://exslt.org/exsl/functions/node-set/) of
+[EXSLT](http://exslt.org/).
+
+This is required for multi-step tree processing, because plain XSLT 1.0 does not
+allow result node-set of template to be bound to variables as node-set.
+This means, you cannot do "pass result tree of some template A to other template
+B" without some extension.
+
+EXSLT is widely known and `node-set()` is supported by many XSLT processors.
+
 ## License
 
 Licensed under either of
