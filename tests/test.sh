@@ -23,10 +23,22 @@ test_de_bruijn_index() {
 	fi
 }
 
+# $1: exp_path
+# $2: exp_stem
+test_reduction_steps() {
+	result_path="reduction-steps/${2}.txt"
+	diff_out="$(xsltproc ../xsl/conv-to-de-bruijn-index.xsl "$1" | xsltproc reduction-steps.xsl - | diff --unified -- "${result_path}" -)"
+	if [ -n "${diff_out}" ] ; then
+		echo "Different output: case ${2} for reduction-steps"
+		echo "$diff_out"
+	fi
+}
+
 for exp_path in expr/*.xml ; do
 	exp_stem="$(basename "$exp_path" .xml)"
 
 	echo "======== case ${exp_stem} ========"
 	test_plain "$exp_path" "$exp_stem"
 	test_de_bruijn_index "$exp_path" "$exp_stem"
+	test_reduction_steps "$exp_path" "$exp_stem"
 done
