@@ -5,6 +5,10 @@ cd "$(dirname "$(readlink -f "$0")")"
 # $2: exp_stem
 test_plain() {
 	result_path="plain/${2}.txt"
+	if [ ! -e "$result_path" ] ; then
+		echo "[SKIP] Case ${2} for plain is skipped"
+		return
+	fi
 	diff_out="$(xsltproc ../xsl/pretty-print.xsl "$1" | diff --unified -- "${result_path}" -)"
 	if [ -n "${diff_out}" ] ; then
 		echo "Different output: case ${2} for plain"
@@ -30,6 +34,10 @@ test_plain_eta() {
 # $2: exp_stem
 test_de_bruijn_term() {
 	result_path="de-bruijn-term/${2}.txt"
+	if [ ! -e "$result_path" ] ; then
+		echo "[SKIP] Case ${2} for de-bruijn-term is skipped"
+		return
+	fi
 	diff_out="$(xsltproc ../xsl/conv-to-de-bruijn-term.xsl "$1" | xsltproc ../xsl/pretty-print.xsl - | diff --unified -- "${result_path}" -)"
 	if [ -n "${diff_out}" ] ; then
 		echo "Different output: case ${2} for de-bruijn-term"
@@ -41,6 +49,10 @@ test_de_bruijn_term() {
 # $2: exp_stem
 test_reduction_steps() {
 	result_path="reduction-steps/${2}.txt"
+	if [ ! -e "$result_path" ] ; then
+		echo "[SKIP] Case ${2} for reduction-steps is skipped"
+		return
+	fi
 	diff_out="$(xsltproc ../xsl/conv-to-de-bruijn-term.xsl "$1" | xsltproc reduction-steps.xsl - | diff --unified -- "${result_path}" -)"
 	if [ -n "${diff_out}" ] ; then
 		echo "Different output: case ${2} for reduction-steps"
@@ -52,6 +64,10 @@ test_reduction_steps() {
 # $2: exp_stem
 test_full_reduction() {
 	result_path="reduction-steps/${2}.txt"
+	if [ ! -e "$result_path" ] ; then
+		echo "[SKIP] Case ${2} for full-reduction is skipped"
+		return
+	fi
 	expected_result="$(tail -n 1 "$result_path")"
 	actual_result="$(xsltproc ../xsl/conv-to-de-bruijn-term.xsl "$1" | xsltproc ../xsl/full-reduction.xsl - | xsltproc ../xsl/pretty-print.xsl -)"
 	if [ "$expected_result" != "$actual_result" ] ; then
@@ -66,6 +82,7 @@ for exp_path in expr/*.xml ; do
 	echo "======== case ${exp_stem} ========"
 	test_plain "$exp_path" "$exp_stem"
 	test_plain_eta "$exp_path" "$exp_stem"
+	test_desugar "$exp_path" "$exp_stem"
 	test_de_bruijn_term "$exp_path" "$exp_stem"
 	test_reduction_steps "$exp_path" "$exp_stem"
 	test_full_reduction "$exp_path" "$exp_stem"
