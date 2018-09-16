@@ -14,6 +14,8 @@ For users (for use by CLI XSLT processor):
 
   * conv-to-de-bruijn-term.xsl
       - Front-end of /lib/conv-to-de-bruijn-term.xsl.
+  * eta-reduction.xsl
+      - Front-end of /lib/eta-reduction.xsl.
   * full-reduction.xsl
       - Front-end of /lib/full-reduction.xsl.
   * onestep-reduction.xsl
@@ -26,6 +28,8 @@ For developers (for use by `<xsl:import>` or `<xsl:include>`):
   * lib/
       + conv-to-de-bruijn-term.xsl
           - Converts the given term into a de Bruijn term.
+      + eta-reduction.xsl
+          - Applies eta (η) reduction as possible.
       + full-reduction.xsl
           - Evaluates the given de Bruijn term as possible.
       + has-beta-redex.xsl
@@ -41,6 +45,8 @@ For developers (for use by `<xsl:import>` or `<xsl:include>`):
       + reduction-steps.xsl
           - Returns results of each reduction steps.
           - For examples, see `/tests/reduction-steps/*.txt`.
+          - By default, it applies eta reduction as the last step.
+            This can be disabled by setting parameter `eta-reduction` to `'no'`.
       + shift.xsl
           - Does shift operation for the given de Bruijn term.
           - For detail, see chapter 6.2 of TaPL.
@@ -66,6 +72,8 @@ Test cases:
       + Original (starting) term to be used as test cases.
   * `plain/*.txt`
       + Expected results for `pretty-print` feature.
+  * `plain/*.eta.txt`
+      + Expected results for `eta-reduction` feature.
   * `de-bruijn-term/*.txt`
       + Expected results for `reduction-steps` and `full-reduction` feature.
 

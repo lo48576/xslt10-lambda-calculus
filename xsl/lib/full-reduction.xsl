@@ -30,27 +30,33 @@
 <!-- Named template. -->
 <xsl:template name="ls:full-reduction">
 	<xsl:param name="term" select="." />
+	<xsl:param name="eta-reduction" select="'yes'" />
 	<xsl:param name="max-recursion" select="256" />
 
 	<xsl:apply-templates select="exsl:node-set($term)" mode="ls:full-reduction">
+		<xsl:with-param name="eta-reduction" select="$eta-reduction" />
 		<xsl:with-param name="max-recursion" select="$max-recursion" />
 	</xsl:apply-templates>
 </xsl:template>
 
 <!-- Fallback for document root. -->
 <xsl:template match="/" mode="ls:full-reduction">
+	<xsl:param name="eta-reduction" select="'yes'" />
 	<xsl:param name="max-recursion" select="256" />
 
 	<xsl:apply-templates mode="ls:full-reduction">
+		<xsl:with-param name="eta-reduction" select="$eta-reduction" />
 		<xsl:with-param name="max-recursion" select="$max-recursion" />
 	</xsl:apply-templates>
 </xsl:template>
 
 <xsl:template match="l:*" mode="ls:full-reduction">
+	<xsl:param name="eta-reduction" select="'yes'" />
 	<xsl:param name="max-recursion" select="256" />
 
 	<xsl:variable name="steps">
 		<xsl:apply-templates select="." mode="ls:reduction-steps">
+			<xsl:with-param name="eta-reduction" select="$eta-reduction" />
 			<xsl:with-param name="max-recursion" select="$max-recursion" />
 		</xsl:apply-templates>
 	</xsl:variable>

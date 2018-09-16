@@ -13,9 +13,11 @@
 <xsl:param name="max-recursion" select="256" />
 
 <xsl:template match="/">
+	<xsl:param name="eta-reduction" select="'yes'" />
 	<xsl:param name="max-recursion" select="$max-recursion" />
 
 	<xsl:call-template name="ls:full-reduction">
+		<xsl:with-param name="eta-reduction" select="$eta-reduction" />
 		<xsl:with-param name="max-recursion" select="$max-recursion" />
 	</xsl:call-template>
 </xsl:template>
