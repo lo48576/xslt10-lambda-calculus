@@ -150,6 +150,14 @@
 </xsl:template>
 
 <xsl:template match="l:lambda[l:param/text() = l:body/l:apply/l:*[2][self::l:var]/text()]" mode="int:eta-reduction-step">
+	<xsl:if test="count(l:body/l:apply/l:*) != 2">
+		<xsl:message terminate="yes">
+			<xsl:text>ERROR: `l:apply` should have just 2 subterms, but found </xsl:text>
+			<xsl:value-of select="count(l:body/l:apply/l:*)" />
+			<xsl:text> (mode=int:eta-reduction-step)</xsl:text>
+		</xsl:message>
+	</xsl:if>
+
 	<xsl:apply-templates select="l:body/l:apply/l:*[1]" mode="int:eta-reduction-step" />
 </xsl:template>
 
@@ -160,6 +168,14 @@
 </xsl:template>
 
 <xsl:template match="l:de-bruijn-lambda[l:apply/l:*[2][self::l:de-bruijn-var][@index = 1]]" mode="int:eta-reduction-step">
+	<xsl:if test="count(l:apply/l:*) != 2">
+		<xsl:message terminate="yes">
+			<xsl:text>ERROR: `l:apply` should have just 2 subterms, but found </xsl:text>
+			<xsl:value-of select="count(l:apply/l:*)" />
+			<xsl:text> (mode=int:eta-reduction-step)</xsl:text>
+		</xsl:message>
+	</xsl:if>
+
 	<xsl:call-template name="int:shift">
 		<xsl:with-param name="shift" select="-1" />
 		<xsl:with-param name="term">
@@ -169,6 +185,14 @@
 </xsl:template>
 
 <xsl:template match="l:apply" mode="int:eta-reduction-step">
+	<xsl:if test="count(l:*) != 2">
+		<xsl:message terminate="yes">
+			<xsl:text>ERROR: `l:apply` should have just 2 subterms, but found </xsl:text>
+			<xsl:value-of select="count(l:*)" />
+			<xsl:text> (mode=int:eta-reduction-step)</xsl:text>
+		</xsl:message>
+	</xsl:if>
+
 	<apply>
 		<xsl:apply-templates mode="int:eta-reduction-step" />
 	</apply>

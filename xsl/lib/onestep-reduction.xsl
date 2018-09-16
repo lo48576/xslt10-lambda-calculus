@@ -89,6 +89,13 @@
 			<xsl:text>]</xsl:text>
 		</xsl:message>
 	</xsl:if>
+	<xsl:if test="count(l:*) != 2">
+		<xsl:message terminate="yes">
+			<xsl:text>ERROR: `l:apply` should have just 2 subterms, but found </xsl:text>
+			<xsl:value-of select="count(l:*)" />
+			<xsl:text> (mode=ls:onestep-reduction)</xsl:text>
+		</xsl:message>
+	</xsl:if>
 
 	<xsl:variable name="lhs-has-beta-redex">
 		<xsl:apply-templates select="*[1]" mode="ls:has-beta-redex" />

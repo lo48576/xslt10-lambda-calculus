@@ -43,6 +43,14 @@
 </xsl:template>
 
 <xsl:template match="l:apply" mode="ls:has-beta-redex">
+	<xsl:if test="count(l:*) != 2">
+		<xsl:message terminate="yes">
+			<xsl:text>ERROR: `l:apply` should have just 2 subterms, but found </xsl:text>
+			<xsl:value-of select="count(l:*)" />
+			<xsl:text> (mode=ls:has-beta-redex)</xsl:text>
+		</xsl:message>
+	</xsl:if>
+
 	<xsl:choose>
 		<xsl:when test="l:*[1][self::l:de-bruijn-lambda]">
 			<xsl:text>true</xsl:text>
