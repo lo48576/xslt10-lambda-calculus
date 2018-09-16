@@ -9,7 +9,6 @@
 	xmlns:int="http://www.cardina1.red/_ns/xslt-lambda-calculus/_internal"
 	exclude-result-prefixes="xsl exsl l ls int"
 >
-<xsl:import href="pretty-print.xsl" />
 <xsl:import href="reduction-steps.xsl" />
 
 <xsl:param name="int:debug" select="'no'" />
