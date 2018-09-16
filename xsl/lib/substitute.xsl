@@ -21,7 +21,7 @@
 <xsl:template name="int:substitute">
 	<!-- term: node-set -->
 	<xsl:param name="term" select="." />
-	<!-- lhs: de bruijn index -->
+	<!-- lhs: de Bruijn index -->
 	<xsl:param name="lhs" select="1" />
 	<!-- rhs: node-set -->
 	<xsl:param name="rhs" />
@@ -47,7 +47,7 @@
 <xsl:template match="/" mode="int:substitute">
 	<!-- term: node-set -->
 	<xsl:param name="term" select="." />
-	<!-- lhs: de bruijn index -->
+	<!-- lhs: de Bruijn index -->
 	<xsl:param name="lhs" select="1" />
 	<!-- rhs: node-set -->
 	<xsl:param name="rhs" />
@@ -63,7 +63,7 @@
 </xsl:template>
 
 <xsl:template match="l:de-bruijn-var" mode="int:substitute">
-	<!-- lhs: de bruijn index -->
+	<!-- lhs: de Bruijn index -->
 	<xsl:param name="lhs" select="1" />
 	<!-- rhs: node-set -->
 	<xsl:param name="rhs" />
@@ -105,7 +105,7 @@
 </xsl:template>
 
 <xsl:template match="l:de-bruijn-lambda" mode="int:substitute">
-	<!-- lhs: de bruijn index -->
+	<!-- lhs: de Bruijn index -->
 	<xsl:param name="lhs" select="1" />
 	<!-- rhs: node-set -->
 	<xsl:param name="rhs" />
@@ -136,7 +136,7 @@
 </xsl:template>
 
 <xsl:template match="l:apply" mode="int:substitute">
-	<!-- lhs: de bruijn index -->
+	<!-- lhs: de Bruijn index -->
 	<xsl:param name="lhs" select="1" />
 	<!-- rhs: node-set -->
 	<xsl:param name="rhs" />

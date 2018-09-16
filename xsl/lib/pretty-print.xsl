@@ -70,7 +70,7 @@
 	<xsl:value-of select="." />
 </xsl:template>
 
-<!-- Variable with de bruijn index. -->
+<!-- Variable with de Bruijn index. -->
 <xsl:template match="l:de-bruijn-var" mode="ls:pretty-print">
 	<xsl:text>$</xsl:text>
 	<xsl:value-of select="@index" />
@@ -101,7 +101,7 @@
 	</xsl:if>
 </xsl:template>
 
-<!-- Lambda abstraction converted into de bruijn index. -->
+<!-- Lambda abstraction converted into de Bruijn term. -->
 <xsl:template match="l:de-bruijn-lambda" mode="ls:pretty-print">
 	<xsl:param name="force-paren" select="'no'" />
 	<xsl:param name="omit-current-paren" select="'no'" />

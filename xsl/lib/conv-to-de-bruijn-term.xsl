@@ -13,7 +13,7 @@
 <xsl:strip-space elements="*"/>
 
 <!-- Fallback for unknown elements. -->
-<xsl:template match="*" mode="ls:conv-to-de-bruijn-index">
+<xsl:template match="*" mode="ls:conv-to-de-bruijn-term">
 	<xsl:message terminate="yes">
 		<xsl:text>ERROR: Unknown element: {</xsl:text>
 		<xsl:value-of select="namespace-uri()" />
@@ -23,11 +23,11 @@
 </xsl:template>
 
 <!-- Named template. -->
-<xsl:template name="ls:conv-to-de-bruijn-index">
+<xsl:template name="ls:conv-to-de-bruijn-term">
 	<xsl:param name="term" select="." />
 	<xsl:if test="count($term) &gt; 1">
 		<xsl:message terminate="yes">
-			<xsl:text>ERROR: Multiple root element is given for template[@name='ls:conv-to-de-bruijn-index']: [</xsl:text>
+			<xsl:text>ERROR: Multiple root element is given for template[@name='ls:conv-to-de-bruijn-term']: [</xsl:text>
 			<xsl:for-each select="$term">
 				<xsl:text> </xsl:text>
 				<xsl:value-of select="local-name(.)" />
@@ -36,14 +36,14 @@
 		<xsl:text>]&#x0a;</xsl:text>
 	</xsl:if>
 
-	<xsl:apply-templates select="exsl:node-set($term)" mode="ls:conv-to-de-bruijn-index" />
+	<xsl:apply-templates select="exsl:node-set($term)" mode="ls:conv-to-de-bruijn-term" />
 </xsl:template>
 
 <!-- Fallback for document root. -->
-<xsl:template match="/" mode="ls:conv-to-de-bruijn-index">
+<xsl:template match="/" mode="ls:conv-to-de-bruijn-term">
 	<xsl:if test="count(l:*) &gt; 1">
 		<xsl:message terminate="yes">
-			<xsl:text>ERROR: Multiple root element is given for template[@name='ls:conv-to-de-bruijn-index']: [</xsl:text>
+			<xsl:text>ERROR: Multiple root element is given for template[@name='ls:conv-to-de-bruijn-term']: [</xsl:text>
 			<xsl:for-each select="l:*">
 				<xsl:text> </xsl:text>
 				<xsl:value-of select="local-name(.)" />
@@ -52,11 +52,11 @@
 		<xsl:text>]&#x0a;</xsl:text>
 	</xsl:if>
 
-	<xsl:apply-templates mode="ls:conv-to-de-bruijn-index" />
+	<xsl:apply-templates mode="ls:conv-to-de-bruijn-term" />
 </xsl:template>
 
 <!-- Already converted terms. -->
-<xsl:template match="l:de-bruijn-var | l:de-bruijn-lambda" mode="ls:conv-to-de-bruijn-index">
+<xsl:template match="l:de-bruijn-var | l:de-bruijn-lambda" mode="ls:conv-to-de-bruijn-term">
 	<xsl:message terminate="yes">
 		<xsl:text>ERROR: The given term `</xsl:text>
 		<xsl:value-of select="local-name()" />
@@ -65,7 +65,7 @@
 </xsl:template>
 
 <!-- Named variable. -->
-<xsl:template match="l:var" mode="ls:conv-to-de-bruijn-index">
+<xsl:template match="l:var" mode="ls:conv-to-de-bruijn-term">
 	<xsl:param name="bindings" />
 	<xsl:variable name="index">
 		<xsl:call-template name="int:de-bruijn-index">
@@ -85,11 +85,11 @@
 </xsl:template>
 
 <!-- Lambda abstraction with parameter name. -->
-<xsl:template match="l:lambda" mode="ls:conv-to-de-bruijn-index">
+<xsl:template match="l:lambda" mode="ls:conv-to-de-bruijn-term">
 	<xsl:param name="bindings" />
 
 	<de-bruijn-lambda>
-		<xsl:apply-templates select="l:body" mode="ls:conv-to-de-bruijn-index">
+		<xsl:apply-templates select="l:body" mode="ls:conv-to-de-bruijn-term">
 			<xsl:with-param name="bindings">
 				<xsl:value-of select="l:param" />
 				<xsl:text> </xsl:text>
@@ -100,34 +100,34 @@
 </xsl:template>
 
 <!-- Virtual parameter of lambda abstraction (`<lambda>`). -->
-<xsl:template match="l:param" mode="ls:conv-to-de-bruijn-index">
+<xsl:template match="l:param" mode="ls:conv-to-de-bruijn-term">
 	<xsl:message terminate="yes">
-		<xsl:text>ERROR: `param` element should not be directly processed by `ls:conv-to-de-bruijn-index` mode</xsl:text>
+		<xsl:text>ERROR: `param` element should not be directly processed by `ls:conv-to-de-bruijn-term` mode</xsl:text>
 		<xsl:text> (this may be caller's bug)</xsl:text>
 	</xsl:message>
 </xsl:template>
 
 <!-- Body of lambda abstraction (`<lambda>`). -->
-<xsl:template match="l:body" mode="ls:conv-to-de-bruijn-index">
+<xsl:template match="l:body" mode="ls:conv-to-de-bruijn-term">
 	<xsl:param name="bindings" />
 
-	<xsl:apply-templates mode="ls:conv-to-de-bruijn-index">
+	<xsl:apply-templates mode="ls:conv-to-de-bruijn-term">
 		<xsl:with-param name="bindings" select="$bindings" />
 	</xsl:apply-templates>
 </xsl:template>
 
 <!-- Application. -->
-<xsl:template match="l:apply" mode="ls:conv-to-de-bruijn-index">
+<xsl:template match="l:apply" mode="ls:conv-to-de-bruijn-term">
 	<xsl:param name="bindings" />
 
 	<apply>
-		<xsl:apply-templates mode="ls:conv-to-de-bruijn-index">
+		<xsl:apply-templates mode="ls:conv-to-de-bruijn-term">
 			<xsl:with-param name="bindings" select="$bindings" />
 		</xsl:apply-templates>
 	</apply>
 </xsl:template>
 
-<!-- Returns de bruijn index of the given variable name from the given bindings. -->
+<!-- Returns de Bruijn index of the given variable name from the given bindings. -->
 <xsl:template name="int:de-bruijn-index">
 	<xsl:param name="bindings" />
 	<xsl:param name="varname" />

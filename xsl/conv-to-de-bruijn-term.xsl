@@ -5,13 +5,13 @@
 	xmlns:ls="http://www.cardina1.red/_ns/xslt-lambda-calculus/stylesheet"
 	exclude-result-prefixes="xsl ls"
 >
-<xsl:import href="lib/conv-to-de-bruijn-index.xsl" />
+<xsl:import href="lib/conv-to-de-bruijn-term.xsl" />
 
 <xsl:output method="xml" encoding="utf-8" indent="yes" omit-xml-declaration="yes" />
 <xsl:strip-space elements="*"/>
 
 <xsl:template match="/">
-	<xsl:call-template name="ls:conv-to-de-bruijn-index" />
+	<xsl:call-template name="ls:conv-to-de-bruijn-term" />
 </xsl:template>
 
 </xsl:stylesheet>
