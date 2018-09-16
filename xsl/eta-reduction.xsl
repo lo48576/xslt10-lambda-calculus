@@ -11,7 +11,11 @@
 <xsl:strip-space elements="*"/>
 
 <xsl:template match="/">
-	<xsl:call-template name="ls:eta-reduction" />
+	<xsl:param name="max-recursion" select="256" />
+
+	<xsl:call-template name="ls:eta-reduction">
+		<xsl:with-param name="max-recursion" select="$max-recursion" />
+	</xsl:call-template>
 </xsl:template>
 
 </xsl:stylesheet>
