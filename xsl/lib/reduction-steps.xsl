@@ -11,6 +11,7 @@
 >
 <xsl:import href="pretty-print.xsl" />
 <xsl:import href="onestep-reduction.xsl" />
+<xsl:import href="eta-reduction.xsl" />
 
 <xsl:param name="int:debug" select="$debug" />
 
@@ -31,11 +32,13 @@
 <!-- Named template. -->
 <xsl:template name="ls:reduction-steps">
 	<xsl:param name="term" select="." />
+	<xsl:param name="eta-reduction" select="'yes'" />
 	<xsl:param name="max-recursion" select="256" />
 	<xsl:param name="int:recursion-count" select="0" />
 	<xsl:param name="int:term-serialized" />
 
 	<xsl:apply-templates select="exsl:node-set($term)" mode="ls:reduction-steps">
+		<xsl:with-param name="eta-reduction" select="$eta-reduction" />
 		<xsl:with-param name="max-recursion" select="$max-recursion" />
 		<xsl:with-param name="int:recursion-count" select="$int:recursion-count" />
 		<xsl:with-param name="int:term-serialized" select="$int:term-serialized" />
@@ -44,11 +47,13 @@
 
 <!-- Fallback for document root. -->
 <xsl:template match="/" mode="ls:reduction-steps">
+	<xsl:param name="eta-reduction" select="'yes'" />
 	<xsl:param name="max-recursion" select="256" />
 	<xsl:param name="int:recursion-count" select="0" />
 	<xsl:param name="int:term-serialized" />
 
 	<xsl:apply-templates mode="ls:reduction-steps">
+		<xsl:with-param name="eta-reduction" select="$eta-reduction" />
 		<xsl:with-param name="max-recursion" select="$max-recursion" />
 		<xsl:with-param name="int:recursion-count" select="$int:recursion-count" />
 		<xsl:with-param name="int:term-serialized" select="$int:term-serialized" />
@@ -63,6 +68,7 @@
 </xsl:template>
 
 <xsl:template match="l:var | l:de-bruijn-var | l:de-bruijn-lambda | l:apply" mode="ls:reduction-steps">
+	<xsl:param name="eta-reduction" select="'yes'" />
 	<xsl:param name="max-recursion" select="256" />
 	<xsl:param name="int:recursion-count" select="0" />
 	<xsl:param name="int:term-serialized" />
@@ -99,7 +105,9 @@
 	</xsl:variable>
 
 	<xsl:variable name="result">
-		<xsl:apply-templates select="." mode="ls:onestep-reduction" />
+		<xsl:apply-templates select="." mode="ls:onestep-reduction">
+			<xsl:with-param name="eta-reduction" select="'no'" />
+		</xsl:apply-templates>
 	</xsl:variable>
 	<xsl:variable name="result-serialized">
 		<xsl:apply-templates select="exsl:node-set($result)" mode="ls:pretty-print">
@@ -126,10 +134,25 @@
 	<xsl:copy-of select="." />
 	<xsl:choose>
 		<xsl:when test="$result-serialized = $term-serialized">
-			<!-- All done. -->
+			<!-- Beta reduction is done. -->
+			<xsl:if test="$eta-reduction = 'yes'">
+				<xsl:variable name="eta-result">
+					<xsl:apply-templates select="exsl:node-set($result)" mode="ls:eta-reduction" />
+				</xsl:variable>
+				<xsl:variable name="eta-result-serialized">
+					<xsl:apply-templates select="exsl:node-set($eta-result)" mode="ls:pretty-print">
+						<xsl:with-param name="omit-current-paren" select="'yes'" />
+					</xsl:apply-templates>
+				</xsl:variable>
+				<xsl:if test="$eta-result-serialized != $result-serialized">
+					<!-- If the eta reduction has some effect, it is one more step to output. -->
+					<xsl:copy-of select="exsl:node-set($eta-result)" />
+				</xsl:if>
+			</xsl:if>
 		</xsl:when>
 		<xsl:otherwise>
 			<xsl:apply-templates select="exsl:node-set($result)" mode="ls:reduction-steps">
+				<xsl:with-param name="eta-reduction" select="$eta-reduction" />
 				<xsl:with-param name="max-recursion" select="$max-recursion" />
 				<xsl:with-param name="int:recursion-count" select="number($int:recursion-count) + 1" />
 				<xsl:with-param name="int:term-serialized" select="$result-serialized" />

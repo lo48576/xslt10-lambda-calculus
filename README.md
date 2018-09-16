@@ -45,6 +45,8 @@ For developers (for use by `<xsl:import>` or `<xsl:include>`):
       + reduction-steps.xsl
           - Returns results of each reduction steps.
           - For examples, see `/tests/reduction-steps/*.txt`.
+          - By default, it applies eta reduction as the last step.
+            This can be disabled by setting parameter `eta-reduction` to `'no'`.
       + shift.xsl
           - Does shift operation for the given de Bruijn term.
           - For detail, see chapter 6.2 of TaPL.
