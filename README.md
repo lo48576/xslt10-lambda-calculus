@@ -72,6 +72,8 @@ Test cases:
       + Original (starting) term to be used as test cases.
   * `plain/*.txt`
       + Expected results for `pretty-print` feature.
+  * `plain/*.eta.txt`
+      + Expected results for `eta-reduction` feature.
   * `de-bruijn-term/*.txt`
       + Expected results for `reduction-steps` and `full-reduction` feature.
 

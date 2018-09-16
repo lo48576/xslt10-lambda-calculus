@@ -14,6 +14,20 @@ test_plain() {
 
 # $1: exp_path
 # $2: exp_stem
+test_plain_eta() {
+	result_path="plain/${2}.eta.txt"
+	if [ ! -e "$result_path" ] ; then
+		return
+	fi
+	diff_out="$(xsltproc ../xsl/eta-reduction.xsl "$1" | xsltproc ../xsl/pretty-print.xsl - | diff --unified -- "${result_path}" -)"
+	if [ -n "${diff_out}" ] ; then
+		echo "Different output: case ${2} for plain-eta"
+		echo "$diff_out"
+	fi
+}
+
+# $1: exp_path
+# $2: exp_stem
 test_de_bruijn_term() {
 	result_path="de-bruijn-term/${2}.txt"
 	diff_out="$(xsltproc ../xsl/conv-to-de-bruijn-term.xsl "$1" | xsltproc ../xsl/pretty-print.xsl - | diff --unified -- "${result_path}" -)"
@@ -51,6 +65,7 @@ for exp_path in expr/*.xml ; do
 
 	echo "======== case ${exp_stem} ========"
 	test_plain "$exp_path" "$exp_stem"
+	test_plain_eta "$exp_path" "$exp_stem"
 	test_de_bruijn_term "$exp_path" "$exp_stem"
 	test_reduction_steps "$exp_path" "$exp_stem"
 	test_full_reduction "$exp_path" "$exp_stem"
