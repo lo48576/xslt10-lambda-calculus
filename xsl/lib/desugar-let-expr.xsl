@@ -57,8 +57,18 @@
 	</xsl:element>
 </xsl:template>
 
-<!-- The output requires `apply-at-once` and `multiple-params` syntax sugar. -->
+<!-- Fallback for `l:let` with unknown binding mode. -->
 <xsl:template match="l:let" mode="ls:desugar-let-expr">
+	<xsl:message terminate="yes">
+		<xsl:text>ERROR: Unknown binding mode for `l:let` at template[@mode='ls:desugar-let-expr']: [l:let/@mode=</xsl:text>
+		<xsl:value-of select="@mode" />
+		<xsl:text>]</xsl:text>
+	</xsl:message>
+</xsl:template>
+
+<!-- The output requires `apply-at-once` and `multiple-params` syntax sugar. -->
+<!-- `let` of Scheme programming language. -->
+<xsl:template match="l:let[not(@mode)] | l:let[@mode = 'independent']" mode="ls:desugar-let-expr">
 	<apply>
 		<lambda>
 			<xsl:for-each select="l:bind">
