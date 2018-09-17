@@ -182,7 +182,8 @@
 	</xsl:if>
 </xsl:template>
 
-<!-- Let-expression (syntax sugar). -->
+<!-- Let-expression (syntax sugar) with 'independent' binding mode. -->
+<!-- `let` of Scheme programming language. -->
 <xsl:template match="l:let" mode="ls:pretty-print">
 	<xsl:param name="force-paren" select="'no'" />
 	<xsl:param name="omit-current-paren" select="'no'" />
@@ -193,11 +194,25 @@
 			<xsl:otherwise>no</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
+	<xsl:variable name="let-name">
+		<xsl:choose>
+			<xsl:when test="not(@mode) or @mode = 'independent'">let</xsl:when>
+			<xsl:when test="@mode = 'one-by-one'">let*</xsl:when>
+			<xsl:otherwise>
+				<xsl:message terminate="yes">
+					<xsl:text>ERROR: Unknown binding mode for `l:let` at template[@mode='ls:pretty-print']: [l:let/@mode=</xsl:text>
+					<xsl:value-of select="@mode" />
+					<xsl:text>]</xsl:text>
+				</xsl:message>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
 
 	<xsl:if test="$paren = 'yes'">
 		<xsl:text>(</xsl:text>
 	</xsl:if>
-	<xsl:text>let </xsl:text>
+	<xsl:value-of select="$let-name" />
+	<xsl:text> </xsl:text>
 	<xsl:for-each select="l:bind">
 		<xsl:apply-templates select="l:var[1]" mode="ls:pretty-print" />
 		<xsl:text>=</xsl:text>

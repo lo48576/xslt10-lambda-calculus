@@ -80,8 +80,11 @@ test_reduction_steps() {
 test_full_reduction() {
 	result_path="reduction-steps/${2}.txt"
 	if [ ! -e "$result_path" ] ; then
-		echo "[SKIP] Case ${2} for full-reduction is skipped"
-		return
+		result_path="reduction-steps/${2}.final.txt"
+		if [ ! -e "$result_path" ] ; then
+			echo "[SKIP] Case ${2} for full-reduction is skipped"
+			return
+		fi
 	fi
 	expected_result="$(tail -n 1 "$result_path")"
 	actual_result="$(xsltproc ../xsl/desugar.xsl "$1" | xsltproc ../xsl/conv-to-de-bruijn-term.xsl - | xsltproc ../xsl/full-reduction.xsl - | xsltproc ../xsl/pretty-print.xsl -)"
