@@ -1,0 +1,1 @@
+(λS. λK. λI. S I (K (S (S (K S) K))) I (S (S (K S) K) I)) (λx. λy. λz. x z (y z)) (λx. λy. x) (λx. x)

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lambda xmlns="http://www.cardina1.red/_ns/xslt-lambda-calculus">
+	<param>x</param>
+	<param>y</param>
+	<param>z</param>
+	<body>
+		<apply>
+			<var>x</var>
+			<var>y</var>
+			<var>z</var>
+		</apply>
+	</body>
+</lambda>

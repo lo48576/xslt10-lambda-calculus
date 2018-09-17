@@ -1,0 +1,1 @@
+(λS. (λK. (λI. (λB. (λsucc. (λadd. (λtwo. (λthree. (λfour. add three four) (two two)) (succ two)) (succ I)) (S I (K succ))) (S B)) (S (K S) K)) (λx. x)) (λx. λy. x)) (λx. λy. λz. x z (y z))

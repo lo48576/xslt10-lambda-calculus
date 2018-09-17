@@ -1,0 +1,1 @@
+let S=(λx y z. x z (y z)), K=(λx y. x), I=(λx. x) in S I (K (S (S (K S) K))) I (S (S (K S) K) I)

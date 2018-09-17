@@ -1,0 +1,1 @@
+let* S=(λx y z. x z (y z)), K=(λx y. x), I=(λx. x), B=(S (K S) K), succ=(S B), add=(S I (K succ)), two=(succ I), three=(succ two), four=(two two) in add three four
