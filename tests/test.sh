@@ -87,7 +87,8 @@ test_full_reduction() {
 	actual_result="$(xsltproc ../xsl/desugar.xsl "$1" | xsltproc ../xsl/conv-to-de-bruijn-term.xsl - | xsltproc ../xsl/full-reduction.xsl - | xsltproc ../xsl/pretty-print.xsl -)"
 	if [ "$expected_result" != "$actual_result" ] ; then
 		echo "Different output: case ${2} for full-reduction"
-		echo "$diff_out"
+		echo "expected: ${expected_result}"
+		echo "actual: ${actual_result}"
 	fi
 }
 
