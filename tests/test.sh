@@ -23,7 +23,7 @@ test_plain_eta() {
 	if [ ! -e "$result_path" ] ; then
 		return
 	fi
-	diff_out="$(xsltproc ../xsl/eta-reduction.xsl "$1" | xsltproc ../xsl/pretty-print.xsl - | diff --unified -- "${result_path}" -)"
+	diff_out="$(xsltproc ../xsl/desugar.xsl "$1" | xsltproc ../xsl/eta-reduction.xsl - | xsltproc ../xsl/pretty-print.xsl - | diff --unified -- "${result_path}" -)"
 	if [ -n "${diff_out}" ] ; then
 		echo "Different output: case ${2} for plain-eta"
 		echo "$diff_out"
@@ -53,7 +53,7 @@ test_de_bruijn_term() {
 		echo "[SKIP] Case ${2} for de-bruijn-term is skipped"
 		return
 	fi
-	diff_out="$(xsltproc ../xsl/conv-to-de-bruijn-term.xsl "$1" | xsltproc ../xsl/pretty-print.xsl - | diff --unified -- "${result_path}" -)"
+	diff_out="$(xsltproc ../xsl/desugar.xsl "$1" | xsltproc ../xsl/conv-to-de-bruijn-term.xsl - | xsltproc ../xsl/pretty-print.xsl - | diff --unified -- "${result_path}" -)"
 	if [ -n "${diff_out}" ] ; then
 		echo "Different output: case ${2} for de-bruijn-term"
 		echo "$diff_out"
