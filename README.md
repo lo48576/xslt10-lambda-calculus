@@ -74,7 +74,7 @@ Test cases:
       + Expected results for `pretty-print` feature.
   * `plain/*.eta.txt`
       + Expected results for `eta-reduction` feature.
-  * `de-bruijn-term/*.txt`
+  * `reduction-steps/*.txt`
       + Expected results for `reduction-steps` and `full-reduction` feature.
 
 
