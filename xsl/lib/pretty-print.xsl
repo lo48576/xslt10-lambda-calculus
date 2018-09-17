@@ -142,7 +142,7 @@
 	</xsl:if>
 </xsl:template>
 
-<!-- Body of lambda abstraction (`<lambda>`). -->
+<!-- Body of lambda abstraction (`<lambda>`) and let-expression (`<let>`). -->
 <xsl:template match="l:body" mode="ls:pretty-print">
 	<xsl:param name="force-paren" select="'no'" />
 	<xsl:param name="omit-current-paren" select="'no'" />
@@ -177,6 +177,37 @@
 		</xsl:if>
 		<xsl:apply-templates select="." mode="ls:pretty-print" />
 	</xsl:for-each>
+	<xsl:if test="$paren = 'yes'">
+		<xsl:text>)</xsl:text>
+	</xsl:if>
+</xsl:template>
+
+<!-- Let-expression (syntax sugar). -->
+<xsl:template match="l:let" mode="ls:pretty-print">
+	<xsl:param name="force-paren" select="'no'" />
+	<xsl:param name="omit-current-paren" select="'no'" />
+	<xsl:variable name="paren">
+		<xsl:choose>
+			<xsl:when test="$omit-current-paren = 'yes'">no</xsl:when>
+			<xsl:when test="$force-paren = 'yes'">yes</xsl:when>
+			<xsl:otherwise>no</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+
+	<xsl:if test="$paren = 'yes'">
+		<xsl:text>(</xsl:text>
+	</xsl:if>
+	<xsl:text>let </xsl:text>
+	<xsl:for-each select="l:bind">
+		<xsl:apply-templates select="l:var[1]" mode="ls:pretty-print" />
+		<xsl:text>=</xsl:text>
+		<xsl:apply-templates select="l:*[2]" mode="ls:pretty-print" />
+		<xsl:if test="position() != last()">
+			<xsl:text>, </xsl:text>
+		</xsl:if>
+	</xsl:for-each>
+	<xsl:text> in </xsl:text>
+	<xsl:apply-templates select="l:body" mode="ls:pretty-print" />
 	<xsl:if test="$paren = 'yes'">
 		<xsl:text>)</xsl:text>
 	</xsl:if>
