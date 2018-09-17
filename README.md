@@ -14,6 +14,8 @@ For users (for use by CLI XSLT processor):
 
   * conv-to-de-bruijn-term.xsl
       - Front-end of /lib/conv-to-de-bruijn-term.xsl.
+  * desugar.xsl
+      - Front-end of /lib/desugar.xsl.
   * eta-reduction.xsl
       - Front-end of /lib/eta-reduction.xsl.
   * full-reduction.xsl
@@ -28,6 +30,17 @@ For developers (for use by `<xsl:import>` or `<xsl:include>`):
   * lib/
       + conv-to-de-bruijn-term.xsl
           - Converts the given term into a de Bruijn term.
+      + desugar-apply-at-once.xsl
+          - Desugars `(a b c ...)` into `(a (b (c ...)))`.
+      + desugar-let-expr.xsl
+          - Desugars `(let a=x, b=y in foobar)` into `((λa. λb. foobar) x y)`.
+          - `let*` is also supported.
+      + desugar-multiple-params.xsl
+          - Desugars `(λx y z. foobar)` into `(λx. λy. λz. foobar)`.
+      + desugar.xsl
+          - Applies all supported desugaring in correct order.
+          - Users usually want to use this for desugaring (not `desugar-*.xsl`
+            ones).
       + eta-reduction.xsl
           - Applies eta (η) reduction as possible.
       + full-reduction.xsl
@@ -68,6 +81,8 @@ Test cases:
 
   * `de-bruijn-term/*.txt`
       + Expected results for `conv-to-de-bruijn-term` feature.
+  * `desugar/*.txt`
+      + Expected results for `desugar` feature.
   * `expr/*.xml`
       + Original (starting) term to be used as test cases.
   * `plain/*.txt`
@@ -76,6 +91,12 @@ Test cases:
       + Expected results for `eta-reduction` feature.
   * `reduction-steps/*.txt`
       + Expected results for `reduction-steps` and `full-reduction` feature.
+  * `reduction-steps/*.final.txt`
+      + Expected results for `full-reduction` feature.
+      + These files are used when the result files for `reduction-steps` feature
+        was not found.
+      + Maybe useful when reduction steps are too long and people cannot (or
+        don't want to) prepare the expected results.
 
 
 ## Namespaces
@@ -137,6 +158,14 @@ It can be any (non-de-Bruijn) term, it should be just one XML element.
 
 `l:lambda` can only be used in non-de-Bruijn terms.
 
+#### Syntax sugar
+
+With `desugar-multiple-params` feature:
+
+  * Zero or more `<l:param>`s can be used for single `<l:lambda>`.
+  * In any case, `<l:body>` should be the last child of `<l:lambda>`.
+
+
 ### Lambda abstraction of de Bruijn term
 
 ```xml
@@ -165,6 +194,46 @@ They can be any terms (which can appear in `l:apply`'s position), but each of
 them should be just one XML element.
 
 `l:apply` can only be used in any terms.
+
+#### Syntax sugar
+
+With `desugar-apply-at-once` feature:
+
+  * One or more terms can be inside `<l:apply>`.
+
+
+### Let expressions (syntax sugar)
+
+With `desugar-let-expr` feature, `<l:let>` can be available.
+
+```xml
+<!-- binding-mode is optional. -->
+<l:let mode="binding-mode">
+  <l:bind>
+    <l:var>var1</l:var>
+    {{term1}}
+  </l:bind>
+  <l:bind>
+    <l:var>var2</l:var>
+    {{term2}}
+  </l:bind>
+  ...
+  {{term-body}}
+</l:let>
+```
+
+  * Zero or more `<l:bind>` can be used.
+      + Put a `<l:var>` with the variable name, then put a term.
+  * Just one body expression (`{{term-body}}` in example) should be placed at
+    the last of `<l:let>`.
+
+You can choose binding mode:
+
+  * `independent` (default)
+      + In this mode, `<l:let>` behaves as `let` of Scheme programming language.
+  * `one-by-one`
+      + In this mode, `<l:let>` behaves as `let*` of Scheme programming
+        language.
 
 
 ## Use of EXSLT (`node-set()`)
