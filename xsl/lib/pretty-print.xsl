@@ -197,6 +197,7 @@
 	<xsl:variable name="let-name">
 		<xsl:choose>
 			<xsl:when test="not(@mode) or @mode = 'independent'">let</xsl:when>
+			<xsl:when test="@mode = 'one-by-one'">let*</xsl:when>
 			<xsl:otherwise>
 				<xsl:message terminate="yes">
 					<xsl:text>ERROR: Unknown binding mode for `l:let` at template[@mode='ls:pretty-print']: [l:let/@mode=</xsl:text>
