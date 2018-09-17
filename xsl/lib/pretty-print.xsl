@@ -93,7 +93,12 @@
 		<xsl:text>(</xsl:text>
 	</xsl:if>
 	<xsl:text>λ</xsl:text>
-	<xsl:apply-templates select="l:param[1]" mode="ls:pretty-print" />
+	<xsl:for-each select="l:param">
+		<xsl:if test="position() != 1">
+			<xsl:text> </xsl:text>
+		</xsl:if>
+		<xsl:apply-templates select="." mode="ls:pretty-print" />
+	</xsl:for-each>
 	<xsl:text>. </xsl:text>
 	<xsl:apply-templates select="l:body[1]" mode="ls:pretty-print" />
 	<xsl:if test="$paren = 'yes'">

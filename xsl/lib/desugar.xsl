@@ -10,6 +10,7 @@
 	exclude-result-prefixes="xsl exsl l ls int"
 >
 <xsl:import href="desugar-apply-at-once.xsl" />
+<xsl:import href="desugar-multiple-params.xsl" />
 
 <xsl:output method="xml" encoding="utf-8" indent="yes" omit-xml-declaration="yes" />
 <xsl:strip-space elements="*"/>
@@ -48,7 +49,13 @@
 </xsl:template>
 
 <xsl:template match="*" mode="ls:desugar">
-	<xsl:apply-templates select="." mode="ls:desugar-apply-at-once" />
+	<xsl:variable name="result-apply-at-once">
+		<xsl:apply-templates select="." mode="ls:desugar-apply-at-once" />
+	</xsl:variable>
+	<xsl:variable name="result-multiple-params">
+		<xsl:apply-templates select="exsl:node-set($result-apply-at-once)" mode="ls:desugar-multiple-params" />
+	</xsl:variable>
+	<xsl:copy-of select="exsl:node-set($result-multiple-params)" />
 </xsl:template>
 
 </xsl:stylesheet>
