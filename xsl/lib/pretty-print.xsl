@@ -65,9 +65,22 @@
 	</xsl:apply-templates>
 </xsl:template>
 
-<!-- Variable with name. -->
-<xsl:template match="l:var" mode="ls:pretty-print">
-	<xsl:value-of select="." />
+<!-- Variable names. -->
+<!-- `l:var`: Variable with name. -->
+<!-- `l:param`: Virtual parameter of lambda abstraction (`<lambda>`). -->
+<xsl:template match="l:var | l:param" mode="ls:pretty-print">
+	<xsl:variable name="name" select="normalize-space()" />
+	<xsl:if test="contains($name, ' ')">
+		<xsl:message terminate="yes">
+			<xsl:text>ERROR: Variable name should not have whitespaces [@mode='ls:pretty-print'][select=</xsl:text>
+			<xsl:value-of select="local-name()" />
+			<xsl:text>][$name=</xsl:text>
+			<xsl:value-of select="$name" />
+			<xsl:text>]</xsl:text>
+		</xsl:message>
+	</xsl:if>
+
+	<xsl:value-of select="$name" />
 </xsl:template>
 
 <!-- Variable with de Bruijn index. -->
@@ -127,11 +140,6 @@
 	<xsl:if test="$paren = 'yes'">
 		<xsl:text>)</xsl:text>
 	</xsl:if>
-</xsl:template>
-
-<!-- Virtual parameter of lambda abstraction (`<lambda>`). -->
-<xsl:template match="l:param" mode="ls:pretty-print">
-	<xsl:value-of select="text()" />
 </xsl:template>
 
 <!-- Body of lambda abstraction (`<lambda>`). -->

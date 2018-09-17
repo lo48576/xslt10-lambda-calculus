@@ -68,10 +68,20 @@
 <!-- Named variable. -->
 <xsl:template match="l:var" mode="ls:conv-to-de-bruijn-term">
 	<xsl:param name="bindings" />
+	<xsl:variable name="varname" select="normalize-space()" />
+	<xsl:if test="contains($varname, ' ')">
+		<xsl:message terminate="yes">
+			<xsl:text>ERROR: Variable name should not have whitespaces [@mode='ls:conv-to-de-bruijn-term'][select=</xsl:text>
+			<xsl:value-of select="local-name()" />
+			<xsl:text>][$varname=</xsl:text>
+			<xsl:value-of select="$varname" />
+			<xsl:text>]</xsl:text>
+		</xsl:message>
+	</xsl:if>
 	<xsl:variable name="index">
 		<xsl:call-template name="int:de-bruijn-index">
 			<xsl:with-param name="bindings" select="normalize-space($bindings)" />
-			<xsl:with-param name="varname" select="." />
+			<xsl:with-param name="varname" select="$varname" />
 		</xsl:call-template>
 	</xsl:variable>
 
@@ -88,11 +98,21 @@
 <!-- Lambda abstraction with parameter name. -->
 <xsl:template match="l:lambda" mode="ls:conv-to-de-bruijn-term">
 	<xsl:param name="bindings" />
+	<xsl:variable name="varname" select="normalize-space(l:param)" />
+	<xsl:if test="contains($varname, ' ')">
+		<xsl:message terminate="yes">
+			<xsl:text>ERROR: Variable name should not have whitespaces [@mode='ls:conv-to-de-bruijn-term'][select=</xsl:text>
+			<xsl:value-of select="local-name()" />
+			<xsl:text>][$varname=</xsl:text>
+			<xsl:value-of select="$varname" />
+			<xsl:text>]</xsl:text>
+		</xsl:message>
+	</xsl:if>
 
 	<de-bruijn-lambda>
 		<xsl:apply-templates select="l:body" mode="ls:conv-to-de-bruijn-term">
 			<xsl:with-param name="bindings">
-				<xsl:value-of select="l:param" />
+				<xsl:value-of select="$varname" />
 				<xsl:text> </xsl:text>
 				<xsl:value-of select="$bindings" />
 			</xsl:with-param>
@@ -134,6 +154,14 @@
 	<xsl:param name="varname" />
 	<xsl:param name="int:current" select="1" />
 	<xsl:variable name="first" select="substring-before(concat($bindings, ' '), ' ')" />
+	<xsl:variable name="varname" select="normalize-space($varname)" />
+	<xsl:if test="contains($varname, ' ')">
+		<xsl:message terminate="yes">
+			<xsl:text>ERROR: Variable name should not have whitespaces [@name='int:de-bruijn-index'][$varname=</xsl:text>
+			<xsl:value-of select="$varname" />
+			<xsl:text>]</xsl:text>
+		</xsl:message>
+	</xsl:if>
 
 	<xsl:choose>
 		<xsl:when test="$first = ''">

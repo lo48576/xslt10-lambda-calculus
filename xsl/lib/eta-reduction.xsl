@@ -141,6 +141,17 @@
 </xsl:template>
 
 <xsl:template match="l:lambda" mode="int:eta-reduction-step">
+	<xsl:variable name="name" select="normalize-space(l:param)" />
+	<xsl:if test="contains($name, ' ')">
+		<xsl:message terminate="yes">
+			<xsl:text>ERROR: Variable name should not have whitespaces [@mode='int:eta-reduction-step'][select=</xsl:text>
+			<xsl:value-of select="local-name()" />
+			<xsl:text>][$name=</xsl:text>
+			<xsl:value-of select="$name" />
+			<xsl:text>]</xsl:text>
+		</xsl:message>
+	</xsl:if>
+
 	<lambda>
 		<xsl:copy-of select="l:param" />
 		<body>
@@ -149,7 +160,7 @@
 	</lambda>
 </xsl:template>
 
-<xsl:template match="l:lambda[l:param/text() = l:body/l:apply/l:*[2][self::l:var]/text()]" mode="int:eta-reduction-step">
+<xsl:template match="l:lambda[l:body/l:apply/l:*[2][self::l:var]]" mode="int:eta-reduction-step">
 	<xsl:if test="count(l:body/l:apply/l:*) != 2">
 		<xsl:message terminate="yes">
 			<xsl:text>ERROR: `l:apply` should have just 2 subterms, but found </xsl:text>
@@ -157,7 +168,43 @@
 			<xsl:text> (mode=int:eta-reduction-step)</xsl:text>
 		</xsl:message>
 	</xsl:if>
+	<xsl:variable name="param-name" select="normalize-space(l:param)" />
+	<xsl:if test="contains($param-name, ' ')">
+		<xsl:message terminate="yes">
+			<xsl:text>ERROR: Variable name should not have whitespaces [@mode='int:eta-reduction-step'][select=</xsl:text>
+			<xsl:value-of select="local-name()" />
+			<xsl:text>][$param-name=</xsl:text>
+			<xsl:value-of select="$name" />
+			<xsl:text>]</xsl:text>
+		</xsl:message>
+	</xsl:if>
+	<xsl:variable name="varname" select="normalize-space(l:body/l:apply/l:*[2][self::l:var])" />
+	<xsl:if test="contains($varname, ' ')">
+		<xsl:message terminate="yes">
+			<xsl:text>ERROR: Variable name should not have whitespaces [@mode='int:eta-reduction-step'][select=</xsl:text>
+			<xsl:value-of select="local-name()" />
+			<xsl:text>][$varname=</xsl:text>
+			<xsl:value-of select="$name" />
+			<xsl:text>]</xsl:text>
+		</xsl:message>
+	</xsl:if>
 
+	<xsl:choose>
+		<xsl:when test="$param-name = $varname">
+			<xsl:apply-templates select="l:body/l:apply/l:*[1]" mode="int:eta-reduction-step" />
+		</xsl:when>
+		<xsl:otherwise>
+			<lambda>
+				<xsl:copy-of select="l:param" />
+				<body>
+					<xsl:apply-templates select="l:body/l:*" mode="int:eta-reduction-step" />
+				</body>
+			</lambda>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
+<xsl:template match="l:lambda[normalize-space(l:param) = normalize-space(l:body/l:apply/l:*[2][self::l:var])]" mode="int:eta-reduction-step">
 	<xsl:apply-templates select="l:body/l:apply/l:*[1]" mode="int:eta-reduction-step" />
 </xsl:template>
 
