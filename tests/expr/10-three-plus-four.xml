@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<let xmlns="http://www.cardina1.red/_ns/xslt-lambda-calculus" mode="one-by-one">
+	<bind>
+		<var>S</var>
+		<lambda>
+			<param>x</param>
+			<param>y</param>
+			<param>z</param>
+			<body>
+				<apply>
+					<var>x</var>
+					<var>z</var>
+					<apply>
+						<var>y</var>
+						<var>z</var>
+					</apply>
+				</apply>
+			</body>
+		</lambda>
+	</bind>
+	<bind>
+		<var>K</var>
+		<lambda>
+			<param>x</param>
+			<param>y</param>
+			<body>
+				<var>x</var>
+			</body>
+		</lambda>
+	</bind>
+	<bind>
+		<var>I</var>
+		<lambda>
+			<param>x</param>
+			<body>
+				<var>x</var>
+			</body>
+		</lambda>
+	</bind>
+	<bind>
+		<var>B</var>
+		<apply>
+			<var>S</var>
+			<apply>
+				<var>K</var>
+				<var>S</var>
+			</apply>
+			<var>K</var>
+		</apply>
+	</bind>
+	<bind>
+		<var>succ</var>
+		<apply>
+			<!-- succ = SB -->
+			<var>S</var>
+			<var>B</var>
+		</apply>
+	</bind>
+	<bind>
+		<var>add</var>
+		<apply>
+			<!-- add = SI(K succ) -->
+			<var>S</var>
+			<var>I</var>
+			<apply>
+				<var>K</var>
+				<var>succ</var>
+			</apply>
+		</apply>
+	</bind>
+	<bind>
+		<var>two</var>
+		<apply>
+			<!-- 2 = S(S(KS)K)I = (succ I) -->
+			<var>succ</var>
+			<var>I</var>
+		</apply>
+	</bind>
+	<bind>
+		<var>three</var>
+		<apply>
+			<!-- 3 = (succ 2) -->
+			<var>succ</var>
+			<var>two</var>
+		</apply>
+	</bind>
+	<bind>
+		<var>four</var>
+		<apply>
+			<!-- 4 = 2^2  -->
+			<!-- Note that n^m is `mn` in church numeric. -->
+			<var>two</var>
+			<var>two</var>
+		</apply>
+	</bind>
+	<body>
+		<apply>
+			<var>add</var>
+			<var>three</var>
+			<var>four</var>
+		</apply>
+	</body>
+</let>
