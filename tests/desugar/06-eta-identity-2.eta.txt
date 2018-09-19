@@ -1,1 +1,0 @@
-../plain/06-eta-identity-2.eta.txt
