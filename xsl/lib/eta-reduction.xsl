@@ -140,72 +140,10 @@
 	<xsl:copy-of select="." />
 </xsl:template>
 
-<xsl:template match="l:lambda" mode="int:eta-reduction-step">
-	<xsl:variable name="name" select="normalize-space(l:param)" />
-	<xsl:if test="contains($name, ' ')">
-		<xsl:message terminate="yes">
-			<xsl:text>ERROR: Variable name should not have whitespaces [@mode='int:eta-reduction-step'][select=</xsl:text>
-			<xsl:value-of select="local-name()" />
-			<xsl:text>][$name=</xsl:text>
-			<xsl:value-of select="$name" />
-			<xsl:text>]</xsl:text>
-		</xsl:message>
-	</xsl:if>
-
-	<lambda>
-		<xsl:copy-of select="l:param" />
-		<body>
-			<xsl:apply-templates select="l:body/l:*" mode="int:eta-reduction-step" />
-		</body>
-	</lambda>
-</xsl:template>
-
-<xsl:template match="l:lambda[l:body/l:apply/l:*[2][self::l:var]]" mode="int:eta-reduction-step">
-	<xsl:if test="count(l:body/l:apply/l:*) != 2">
-		<xsl:message terminate="yes">
-			<xsl:text>ERROR: `l:apply` should have just 2 subterms, but found </xsl:text>
-			<xsl:value-of select="count(l:body/l:apply/l:*)" />
-			<xsl:text> (mode=int:eta-reduction-step)</xsl:text>
-		</xsl:message>
-	</xsl:if>
-	<xsl:variable name="param-name" select="normalize-space(l:param)" />
-	<xsl:if test="contains($param-name, ' ')">
-		<xsl:message terminate="yes">
-			<xsl:text>ERROR: Variable name should not have whitespaces [@mode='int:eta-reduction-step'][select=</xsl:text>
-			<xsl:value-of select="local-name()" />
-			<xsl:text>][$param-name=</xsl:text>
-			<xsl:value-of select="$name" />
-			<xsl:text>]</xsl:text>
-		</xsl:message>
-	</xsl:if>
-	<xsl:variable name="varname" select="normalize-space(l:body/l:apply/l:*[2][self::l:var])" />
-	<xsl:if test="contains($varname, ' ')">
-		<xsl:message terminate="yes">
-			<xsl:text>ERROR: Variable name should not have whitespaces [@mode='int:eta-reduction-step'][select=</xsl:text>
-			<xsl:value-of select="local-name()" />
-			<xsl:text>][$varname=</xsl:text>
-			<xsl:value-of select="$name" />
-			<xsl:text>]</xsl:text>
-		</xsl:message>
-	</xsl:if>
-
-	<xsl:choose>
-		<xsl:when test="$param-name = $varname">
-			<xsl:apply-templates select="l:body/l:apply/l:*[1]" mode="int:eta-reduction-step" />
-		</xsl:when>
-		<xsl:otherwise>
-			<lambda>
-				<xsl:copy-of select="l:param" />
-				<body>
-					<xsl:apply-templates select="l:body/l:*" mode="int:eta-reduction-step" />
-				</body>
-			</lambda>
-		</xsl:otherwise>
-	</xsl:choose>
-</xsl:template>
-
-<xsl:template match="l:lambda[normalize-space(l:param) = normalize-space(l:body/l:apply/l:*[2][self::l:var])]" mode="int:eta-reduction-step">
-	<xsl:apply-templates select="l:body/l:apply/l:*[1]" mode="int:eta-reduction-step" />
+<xsl:template match="l:lambda" mode="ls:eta-reduction">
+	<xsl:message terminate="yes">
+		<xsl:text>ERROR: Got `lambda` element, but it should be converted to de-bruijn-lamdbda [@mode=ls:eta-reduction]</xsl:text>
+	</xsl:message>
 </xsl:template>
 
 <xsl:template match="l:de-bruijn-lambda" mode="int:eta-reduction-step">
@@ -222,13 +160,26 @@
 			<xsl:text> (mode=int:eta-reduction-step)</xsl:text>
 		</xsl:message>
 	</xsl:if>
-
-	<xsl:call-template name="int:shift">
-		<xsl:with-param name="shift" select="-1" />
-		<xsl:with-param name="term">
-			<xsl:apply-templates select="l:apply/l:*[1]" mode="int:eta-reduction-step" />
-		</xsl:with-param>
-	</xsl:call-template>
+	<xsl:variable name="index-is-used">
+		<xsl:apply-templates select="l:apply/l:*[1]" mode="int:find-de-bruijn-index-used">
+			<xsl:with-param name="index" select="1" />
+		</xsl:apply-templates>
+	</xsl:variable>
+	<xsl:choose>
+		<xsl:when test="normalize-space($index-is-used) = ''">
+			<xsl:call-template name="int:shift">
+				<xsl:with-param name="shift" select="-1" />
+				<xsl:with-param name="term">
+					<xsl:apply-templates select="l:apply/l:*[1]" mode="int:eta-reduction-step" />
+				</xsl:with-param>
+			</xsl:call-template>
+		</xsl:when>
+		<xsl:otherwise>
+			<de-bruijn-lambda>
+				<xsl:apply-templates mode="int:eta-reduction-step" />
+			</de-bruijn-lambda>
+		</xsl:otherwise>
+	</xsl:choose>
 </xsl:template>
 
 <xsl:template match="l:apply" mode="int:eta-reduction-step">
@@ -243,6 +194,51 @@
 	<apply>
 		<xsl:apply-templates mode="int:eta-reduction-step" />
 	</apply>
+</xsl:template>
+
+<xsl:template match="*" mode="int:find-de-bruijn-index-used">
+	<xsl:message terminate="yes">
+		<xsl:text>ERROR: Unknown element: {</xsl:text>
+		<xsl:value-of select="namespace-uri()" />
+		<xsl:text>}</xsl:text>
+		<xsl:value-of select="local-name()" />
+		<xsl:text>, mode=int:find-de-bruijn-index-used</xsl:text>
+	</xsl:message>
+</xsl:template>
+
+<xsl:template match="l:*" mode="int:find-de-bruijn-index-used">
+	<xsl:param name="index" />
+
+	<xsl:apply-templates mode="int:find-de-bruijn-index-used">
+		<xsl:with-param name="index" select="$index" />
+	</xsl:apply-templates>
+</xsl:template>
+
+<xsl:template match="l:var" mode="int:find-de-bruijn-index-used" />
+
+<xsl:template match="l:de-bruijn-var" mode="int:find-de-bruijn-index-used">
+	<xsl:param name="index" />
+
+	<xsl:if test="number(@index) = number($index)">
+		<xsl:value-of select="@index" />
+		<xsl:text> </xsl:text>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template match="l:de-bruijn-lambda" mode="int:find-de-bruijn-index-used">
+	<xsl:param name="index" />
+
+	<xsl:apply-templates mode="int:find-de-bruijn-index-used">
+		<xsl:with-param name="index" select="number($index) + 1" />
+	</xsl:apply-templates>
+</xsl:template>
+
+<xsl:template match="l:apply" mode="int:find-de-bruijn-index-used">
+	<xsl:param name="index" />
+
+	<xsl:apply-templates mode="int:find-de-bruijn-index-used">
+		<xsl:with-param name="index" select="$index" />
+	</xsl:apply-templates>
 </xsl:template>
 
 </xsl:stylesheet>
