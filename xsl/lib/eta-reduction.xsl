@@ -147,19 +147,21 @@
 </xsl:template>
 
 <xsl:template match="l:de-bruijn-lambda" mode="int:eta-reduction-step">
-	<de-bruijn-lambda>
-		<xsl:apply-templates mode="int:eta-reduction-step" />
-	</de-bruijn-lambda>
-</xsl:template>
-
-<xsl:template match="l:de-bruijn-lambda[l:apply/l:*[last()][self::l:de-bruijn-var][@index = 1]]" mode="int:eta-reduction-step">
-	<xsl:variable name="index-is-used">
-		<xsl:apply-templates select="l:apply/l:*[position() != last()]" mode="int:find-de-bruijn-index-used">
-			<xsl:with-param name="index" select="1" />
-		</xsl:apply-templates>
+	<xsl:variable name="can-be-reduced-if-empty">
+		<xsl:choose>
+			<xsl:when test="l:apply/l:*[last()][self::l:de-bruijn-var][@index = 1]">
+				<xsl:apply-templates select="l:apply/l:*[position() != last()]" mode="int:find-de-bruijn-index-used">
+					<xsl:with-param name="index" select="1" />
+				</xsl:apply-templates>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>The term cannot be reduced because it is not `(λ {{terms}} $1)` form.</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:variable>
+
 	<xsl:choose>
-		<xsl:when test="normalize-space($index-is-used) = ''">
+		<xsl:when test="normalize-space($can-be-reduced-if-empty) = ''">
 			<xsl:call-template name="int:shift">
 				<xsl:with-param name="shift" select="-1" />
 				<xsl:with-param name="term">
