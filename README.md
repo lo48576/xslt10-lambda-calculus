@@ -31,7 +31,7 @@ For developers (for use by `<xsl:import>` or `<xsl:include>`):
       + conv-to-de-bruijn-term.xsl
           - Converts the given term into a de Bruijn term.
       + desugar-apply-at-once.xsl
-          - Desugars `(a b c ...)` into `(a (b (c ...)))`.
+          - Desugars `(a b c ...)` into `(...((a b) c) ...)`.
       + desugar-let-expr.xsl
           - Desugars `(let a=x, b=y in foobar)` into `((λa. λb. foobar) x y)`.
           - `let*` is also supported.
